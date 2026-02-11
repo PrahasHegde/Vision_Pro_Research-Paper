@@ -165,7 +165,7 @@ If this distance is below a learned threshold (e.g., $\tau < 0.6$), the identity
         \centering
         \begin{subfigure}{0.5\textwidth}
             \includegraphics[width=\textwidth]{img/mes_lab.png}
-            \caption{\textbf{3D Reconstruction:}}
+            \caption{\textbf{3D Reconstruction:} Mesh of facial landmarks with depth.}
             \label{fig:sys1a}
         \end{subfigure}%
         \hspace{0.04\textwidth}%
@@ -179,7 +179,7 @@ If this distance is below a learned threshold (e.g., $\tau < 0.6$), the identity
     \begin{subfigure}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{img/complx_bd.jpeg}
-        \caption{\textbf{Integrated System Architecture: }sytem components with data flow.}
+        \caption{\textbf{Integrated System Architecture: }Sytem components with data flow.}
         \label{fig:sys2}
     \end{subfigure}
     \caption{\textbf{Liveness (3D Reconstruction and Disparity) and Integrated System Architecture.}}
@@ -279,11 +279,11 @@ Ultimately, YuNet + SFace provided the optimal solution. It achieved perfect met
 
 
 
-\begin{figure}[htbp]
+\begin{figure}[t!]
     \centering
     \Description{Confusion matrix or comparative chart showing model performance across tested configurations.}
     \includegraphics[width=0.35\textwidth]{img/model_cf.png}
-    \caption{Simple block diagram of the system}
+    \caption{\textbf{Confusion Matrix for YuNet + SFace:} Demonstrating perfect accuracy and low error.}
     \label{fig:cf}
 \end{figure}
 
@@ -333,21 +333,21 @@ The YuNet + SFace configuration emerged as the optimal architecture. It achieved
 \begin{table}[htbp]
 \centering
 \caption{Expected Depth Differences}
-\begin{tabular}{|l|>{\centering\arraybackslash}p{4cm}|}
-\hline
-\textbf{Classification} &
-\textbf{Depth difference between eyes and nose $\Delta z$ (m)} \\
-\hline
+\begin{tabular}{l>{\centering\arraybackslash}p{4cm}}
+\toprule
+\textbf{Classification} & 
+\textbf{$\Delta z$ (m)} \\
+\midrule
 Average Adult Face  & 0.020--0.030 \\
 Average Child Face  & 0.015--0.020 \\
 Photo / Flat Surface & $\approx 0.000$ \\
-\hline
+\bottomrule
 \end{tabular}
 \label{tab:depth_differences}
 \end{table}
 
 
-\noindent \textbf{Table}~\ref{tab:depth_differences} shows expected depth differences for real human faces and planar surfaces. These theoretical values form the basis for liveness detection.
+\noindent \textbf{Table~\ref{tab:depth_differences}} shows expected depth differences for real human faces and planar surfaces. These theoretical values form the basis for liveness detection.
 
 
 % -----------------------------
@@ -356,19 +356,19 @@ Photo / Flat Surface & $\approx 0.000$ \\
 \begin{table}[htbp]
 \caption{Liveness Decision Parameters}
 \centering
-\begin{tabular}{|l|c|}
-\hline
+\begin{tabular}{lc}
+\toprule
 \textbf{Parameter} & \textbf{Value} \\
-\hline
+\midrule
 Liveness Minimum ($\Delta Z_{\min}$) & 0.015 m \\
 Liveness Maximum ($\Delta Z_{\max}$) & 0.080 m \\
 Consensus Frames ($N_c$) & 3 \\
-\hline
+\bottomrule
 \end{tabular}
 \label{tab:liveness_params}
 \end{table}
 
-\noindent \textbf{Table}~\ref{tab:liveness_params} lists the  Liveness Decision parameters. The depth thresholds define valid liveness ranges, and the consensus frame count ensures stability across multiple frames.
+\noindent \textbf{Table~\ref{tab:liveness_params}} lists the  Liveness Decision parameters. The depth thresholds define valid liveness ranges, and the consensus frame count ensures stability across multiple frames.
 
 % -----------------------------
 % Table III
@@ -376,29 +376,29 @@ Consensus Frames ($N_c$) & 3 \\
 \begin{table}[htbp]
 \caption{Depth Measurements and Liveness Results}
 \centering
-\begin{tabular}{|l|c|c|c|c|}
-\hline
+\begin{tabular}{lcccc}
+\toprule
 \textbf{Test Scenario} & \textbf{$Z_{eyes}$ (m)} & \textbf{$Z_{nose}$ (m)} & \textbf{$\Delta Z$ (m)} & \textbf{Result} \\
-\hline
+\midrule
 Real Human Subject & 0.430 & 0.393 & \textbf{0.037} & \textbf{PASS} \\
 Printed Photo & 0.338 & 0.335 & 0.003 & FAIL \\
 Mobile Phone Screen & 0.477 & 0.356 & 0.121 & FAIL \\
-\hline
+\bottomrule
 \end{tabular}
 \label{tab:results}
 \end{table}
 
-\noindent \textbf  Table~\ref{tab:results} compares measured depth differences for real faces and spoof attacks. Genuine faces fall within the liveness range and pass the test, while printed photos and phone screens fail due to insufficient or inconsistent depth variation.Mobile phone screens show higher depth differences than expected for a planar surface because reflections, glare, and display curvature introduce erroneous stereo disparities, which the system interprets as depth variation, resulting in artificially inflated Z values. Despite this, the values remain outside the valid liveness range, so the spoof is correctly rejected.
+\noindent \textbf{Table~\ref{tab:results}} compares measured depth differences for real faces and spoof attacks. Human faces fall within the liveness range and pass the test, while printed photos and phone screens fail due to inconsistent depth variation. Mobile phone screens show higher depth differences than expected for a planar surface because reflections, and display curvature introduce erroneous stereo disparities, which the system interprets as depth variation, resulting in artificially inflated Z values. Despite this, the values remain outside the valid liveness range, so the spoof is correctly rejected.
 
 %*******************************************************************
 
 \section{Conclusion}
-This research presents an efficient real-time face recognition system for edge computing on the Raspberry Pi 5, featuring epipolar geometry-based liveness detection and a web management dashboard. The YuNet + SFace pipeline outperformed traditional methods and heavier deep learning models, demonstrating that high-precision biometric authentication is feasible on affordable embedded hardware.
+This research presents an efficient real-time face recognition system for edge computing on the Raspberry Pi 5, featuring epipolar geometry-based liveness detection and a web management dashboard. The YuNet + SFace pipeline outperformed other models, demonstrating that high-precision biometric authentication is feasible on affordable embedded hardware.
 
 %**********************************************************************
 \section{Acknowledgment}
 We would like to express our sincere gratitude to the  Technical University of Applied Sciences Würzburg-Schweinfurt (THWS) for providing the academic environment, infrastructure, and resources necessary to carry out this project.
-We also extend our heartfelt thanks to Prof. Dr. Andreas Lehrmann for his valuable guidance, continuous support, and insightful feedback throughout the development of this work. His expertise and encouragement played a crucial role in shaping both the conceptual design and the successful implementation.
+We also extend our heartfelt thanks to Prof. Dr. Andreas Lehrmann for his valuable guidance, continuous support, and insightful feedback throughout the development of this work. His expertise and encouragement played a crucial role for the successful implementation.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}
