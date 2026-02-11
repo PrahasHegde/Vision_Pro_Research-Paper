@@ -75,7 +75,7 @@ This paper presents a smart locking system that integrates face recognition with
 
 
 \section{Introduction}
-Smart surveillance systems \cite{mordor2026} play a crucial role in home security by enabling convenient authorized access. However, traditional methods such as PIN codes, RFID cards, and fingerprints are increasingly vulnerable to forgery, cloning, and physical tampering \cite{zainuddin2024}. While existing face recognition algorithms offer a more seamless approach, they remain susceptible to spoofing attacks using high-resolution photos or videos and may struggle in different lighting conditions. \cite{bhattacharjee2018}. Furthermore, modern solutions utilize complex machine learning models that improve accuracy but require high computational resources, which limits their use on lightweight platforms like Raspberry Pi and often difficult to scale \cite{yunet2023}. These advanced systems rely on cloud infrastructure for database storage and thus, adds to the financial cost of the entire system..
+Smart surveillance systems \cite{mordor2026} play a crucial role in home security by enabling convenient authorized access. However, traditional methods such as PIN codes, RFID cards, and fingerprints are increasingly vulnerable to forgery, cloning, and physical tampering \cite{zainuddin2024}. While existing face recognition algorithms offer a more seamless approach, they remain susceptible to spoofing attacks using high-resolution photos or videos and may struggle in different lighting conditions \cite{bhattacharjee2018}. Furthermore, modern solutions utilize complex machine learning models that improve accuracy but require high computational resources, which limits their use on lightweight platforms like Raspberry Pi and often difficult to scale \cite{yunet2023}. These advanced systems rely on cloud infrastructure for database storage and thus, adds to the financial cost of the entire system.
 
 To overcome these challenges, the proposed system confirms liveness using epipolar geometry and facial landmarks (eyes and nose) to find depth—a lightweight yet effective measure to thwart 2-D spoofing \cite{researchgate2016}. High-speed face detection and recognition are achieved using YuNet and SFace, specifically optimized for resource-constrained environments \cite{yunet2023, deepface2024}. An Arduino to control a solenoid lock, while a web-based dashboard provides live monitoring and remote admin approval \cite{arduinoexpert2025}. Overall, this pipeline achieves a balance between security, accuracy, and performance.
 
@@ -100,7 +100,7 @@ Vongchumyen et al. (2017) proposed a Web-based system and Aswini D. et al. (2021
 To improve convenience, facial recognition was adopted, but single-camera systems face a trade-off between security and speed. Cloud-based solutions (Maheshwari \& Nalini, 2017) offer accuracy but suffer from latency and internet dependency. Alternatively, local offline systems (Elechi et al., 2022) often lack the robustness to distinguish real faces from photos. To counter this, Dasare (2021) introduced ``active liveness'' (hand gestures), which unfortunately adds user friction. A robust system must be both passive (no gestures) and local (offline).
 
 \subsection{Stereo Vision and The Research Gap}
-To achieve passive, secure liveness detection, our work leverages Stereo Vision for 3D depth extraction. Our methodology relies on Zhang's (1998) standard for camera calibration to ensure geometric accuracy and Hartley \& Sturm's (1997) triangulation framework to reconstruct facial landmarks. Crucially, we utilize Hirschmüller's (2005) Semi-Global Matching (SGM) algorithm. By applying epipolar geometry constraints, SGM produces dense disparity maps efficiently on embedded hardware. While recent ``Foundation Models'' like Wen et al. (2025) offer high accuracy, they are computationally prohibitive for microcontrollers.
+To achieve passive, secure liveness detection, our work leverages Stereo Vision for 3D depth extraction. Our methodology relies on Zhang's (1998) standard for camera calibration to ensure geometric accuracy and Hartley \& Sturm's (1997) triangulation framework to reconstruct facial landmarks. Crucially, we utilize (Hirschmüller 2005) Semi-Global Matching (SGM) algorithm. By applying epipolar geometry constraints, SGM produces dense disparity maps efficiently on embedded hardware. While recent ``Foundation Models'' like (Wen et al.2025) offer high accuracy, they are computationally prohibitive for microcontrollers.
 
 
 %*********************************************************************************
@@ -163,8 +163,8 @@ If this distance is below a learned threshold (e.g., $\tau < 0.6$), the identity
     % Left side: 2 small subfigures SIDE-BY-SIDE
     \begin{subfigure}{0.5\textwidth}
         \centering
-        \begin{subfigure}{0.5\textwidth}
-            \includegraphics[width=\textwidth]{img/mes_lab.png}
+        \begin{subfigure}{0.39\textwidth}
+            \includegraphics[width=\textwidth]{img/mesh2.jpeg}
             \caption{\textbf{3D Reconstruction:} Mesh of facial landmarks with depth.}
             \label{fig:sys1a}
         \end{subfigure}%
@@ -197,7 +197,7 @@ The proposed system comprises a sequential processing pipeline designed for real
     \item \textbf{Epipolar Geometry:} The stereo vision module follows the calibrated stereo camera model described in Eq.~\ref{eq:intrinsic}. Intrinsic and extrinsic parameters are obtained offline using a standard chessboard calibration procedure. Using these parameters, epipolar rectification is applied to align corresponding scan lines, as in Eq.~\ref{eq:epipolar}. Disparity is then computed along horizontal epipolar lines using the Semi-Global Block Matching (SGBM) algorithm, producing a dense disparity map (Fig.\ref{fig:sys1b}) suitable for real-time processing.
 
 \item \textbf{Depth Estimation:}
-The depth (Z) of any pixel is inversely proportional to its disparity (d). The relationship is defined in Eq.\ref{eq:depth}
+The depth (Z) of any pixel is inversely proportional to its disparity (d). The relationship is defined in Eq.\ref{eq:depth}.
 The formulation allows reliable estimation of relative facial depth using the calibrated stereo configuration.
 
 \item \textbf{Facial Landmark Localization:}
