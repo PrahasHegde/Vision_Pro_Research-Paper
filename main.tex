@@ -108,10 +108,11 @@ To achieve passive, secure liveness detection, our work leverages Stereo Vision 
 %*********************************************************************************
 
 \section{Technical Prerequisites}
+\label{sec:tech_preq}
 This section outlines the mathematical foundations of stereo vision, calibration, and metric learning required for the proposed system.
 
 \subsection{Stereo Calibration \& Epipolar Geometry}
-To reconstruct 3D information, we model the camera using the Pinhole Model. First, we estimate the \textbf{Intrinsic Matrix} ($K$) using the flexible calibration technique established by \textbf{Zhang (1998)}. This accounts for focal length ($f_x, f_y$) and optical center ($c_x, c_y$) from low-cost sensors:
+To reconstruct 3D information, we model the camera using the Pinhole Model. First, we estimate the \textbf{Intrinsic Matrix} ($K$) using the flexible calibration technique \cite{Zhang1998}. This accounts for focal length ($f_x, f_y$) and optical center ($c_x, c_y$) from low-cost sensors:
 
 \begin{equation}
     K = \begin{bmatrix} 
@@ -122,7 +123,7 @@ To reconstruct 3D information, we model the camera using the Pinhole Model. Firs
     \label{eq:intrinsic}
 \end{equation}
 
-For stereo consistency, we utilize the \textbf{Epipolar Constraint} and triangulation framework described by \textbf{Hartley and Sturm (1997)}. Given a point projected onto the left ($\mathbf{p}_L$) and right ($\mathbf{p}_R$) image planes, their relationship is governed by the Fundamental Matrix ($\mathbf{F}$):
+For stereo consistency, we utilize the \textbf{Epipolar Constraint} and triangulation framework \cite{Hartley1997}. Given a point projected onto the left ($\mathbf{p}_L$) and right ($\mathbf{p}_R$) image planes, their relationship is governed by the Fundamental Matrix ($\mathbf{F}$):
 
 \begin{equation}
     \mathbf{p}_R^T \cdot \mathbf{F} \cdot \mathbf{p}_L = 0
@@ -130,7 +131,7 @@ For stereo consistency, we utilize the \textbf{Epipolar Constraint} and triangul
 \end{equation}
 
 \subsection{Disparity \& Depth Estimation}
-To compute depth, we first calculate pixel disparity ($d$) using the \textbf{Semi-Global Block Matching (SGBM)} algorithm. Unlike simple pixel matching, SGBM enforces a global smoothness constraint to reduce noise on textureless surfaces like skin. The depth $Z$ is inversely proportional to disparity:
+To compute depth, we first calculate pixel disparity ($d$) using the \textbf{Semi-Global Block Matching (SGBM)} algorithm \cite{hirschmuller2008stereo}. Unlike simple pixel matching, SGBM enforces a global smoothness (WLS) constraint to reduce noise on textureless surfaces like skin. The depth $Z$ is inversely proportional to disparity \cite{Hartley1997}:
 
 \begin{equation}
     Z = \frac{f \cdot B}{d}
@@ -141,7 +142,7 @@ Where $Z$ is the distance (depth) of the object from the camera, $f$ is the foca
 
 \subsection{Deep Metric Learning}
 
-Identity verification utilizes a neural network trained with \textbf{Triplet Loss} (\textbf{Schroff et al., 2015}) to map facial features into a 128-dimensional embedding space. Verification is performed by calculating the \textbf{Euclidean Distance} between the live embedding ($\mathbf{p}$) and stored embedding ($\mathbf{q}$):
+Identity verification utilizes a neural network trained with \textbf{Triplet Loss} \cite{Schroff2015} to map facial features into a 128-dimensional embedding space. Verification is performed by calculating the \textbf{Euclidean Distance} between the live embedding ($\mathbf{p}$) and stored embedding ($\mathbf{q}$):
 
 \begin{equation}
     d(\mathbf{p}, \mathbf{q}) = \sqrt{\sum_{i=1}^{128} (p_i - q_i)^2}
@@ -189,90 +190,91 @@ If this distance is below a learned threshold (e.g., $\tau < 0.6$), the identity
 
 
 \subsection{System Overview}
-The proposed system comprises a sequential processing pipeline designed for real-time secure access control. The workflow begins with stereo vision for depth perception and anti-spoofing, followed by deep learning-based face recognition and a control interface for hardware actuation. The system captures synchronized video streams from two network cameras, applies epipolar rectification and depth estimation to verify facial liveness, and subsequently performs identity recognition using learned facial embeddings. After successful authentication, an Arduino-controlled solenoid lock is actuated to grant physical access.
+The proposed system comprises a sequential processing pipeline designed for real-time secure access control. The workflow begins with stereo vision for depth perception and anti-spoofing, followed by deep learning-based face recognition and a control interface for hardware actuation. The system captures synchronized video streams from two cameras, applies epipolar rectification and depth estimation to verify facial liveness, and subsequently performs identity recognition using learned facial embeddings. After successful authentication, an Arduino-controlled solenoid lock is actuated to grant physical access.
 
 \subsection{System Design and Implementation }
 \begin{itemize}
-    \item \textbf{Epipolar Geometry}: The stereo vision module follows the calibrated stereo camera model described in Section~III. Intrinsic and extrinsic parameters are obtained offline using a standard chessboard calibration procedure. Using these parameters, epipolar rectification is applied to align corresponding scanlines, enforcing the epipolar constraint defined in Eq.~\ref{eq:epipolar_dots}. Disparity is then computed along horizontal epipolar lines using the Semi-Global Block Matching (SGBM) algorithm, producing a dense disparity map suitable for real-time processing.
+    \item \textbf{Epipolar Geometry:} The stereo vision module follows the calibrated stereo camera model described in Eq.~\ref{eq:intrinsic}. Intrinsic and extrinsic parameters are obtained offline using a standard chessboard calibration procedure. Using these parameters, epipolar rectification is applied to align corresponding scan lines, as in Eq.~\ref{eq:epipolar}. Disparity is then computed along horizontal epipolar lines using the Semi-Global Block Matching (SGBM) algorithm, producing a dense disparity map (Fig.\ref{fig:sys1b}) suitable for real-time processing.
 
-\item \textbf{Depth Estimation}:
-The depth (Z) of any pixel is inversely proportional to its disparity (d). The relationship is defined in Eq \ref{eq:depth}
+\item \textbf{Depth Estimation:}
+The depth (Z) of any pixel is inversely proportional to its disparity (d). The relationship is defined in Eq.\ref{eq:depth}
 The formulation allows reliable estimation of relative facial depth using the calibrated stereo configuration.
 
-\item \textbf{Facial Landmark Localization}:
-After depth estimation, facial landmarks are detected using the YuNet model, which identifies both bounding boxes and precise coordinates for key features such as the eyes and nose tip. These landmarks are detected in the rectified image space and mapped to the corresponding coordinates in the disparity map. This mapping enables direct association between facial landmarks and their estimated depth values, forming the basis for subsequent liveness analysis.
+\item \textbf{Facial Landmark Localization:}
+Facial landmarks are detected using the YuNet model, which identifies both bounding boxes and precise coordinates for key facial features. These landmarks are detected in the rectified image space and mapped to the corresponding coordinates in the disparity map. This mapping enables direct association between facial landmarks and their estimated depth values.
 
-\item \textbf{Liveness Detection Using Landmark-Based Depth Analysis}:
-A human face is a 3d object where the nose is closer to the camera than eyes. Conversely, a 2D spoof (photo) is planar, meaning the depth of the nose and eyes is approximately equal. Depth values are extracted at the landmark positions corresponding to the left eye, right eye, and nose tip.
+\item \textbf{Liveness Detection:}
+A human face is a 3D object where the nose is closer to the camera than eyes. Conversely, a 2D spoof (photo) is planar, meaning the depths of the nose and eyes are approximately equal. Depth values are extracted at the landmark positions corresponding to the left eye, right eye, and nose tip.
 
 \begin{equation}
 \Delta Z = \frac{Z_{\text{left\_eye}} + Z_{\text{right\_eye}}}{2} - Z_{\text{nose}}
 \end{equation}
 
 
-where $Z_{\text{left\_eye}}$, $Z_{\text{right\_eye}}$, and $Z_{\text{nose}}$ denote the estimated depths at the corresponding facial landmark locations. The liveness condition is considered satisfied if the resulting geometric protrusion exceeds a predefined threshold. To ensure robustness against noise and transient estimation errors, liveness verification is performed over multiple consecutive frames.
+where $Z_{\text{left\_eye}}$, $Z_{\text{right\_eye}}$, and $Z_{\text{nose}}$ denote the estimated depths at the corresponding facial landmark. The liveness condition is satisfied if the resulting geometric protrusion exceeds a predefined threshold. To ensure robustness against noise and transient estimation errors, liveness verification is performed over multiple consecutive frames.
 
 
-\item \textbf{Face Recognition and Identity Verification}:
-After successful liveness verification, the system employs a deep learning pipeline consisting of two models: YuNet for face detection and SFace for face recognition. To ensure robustness against pose variations, Affine transformation is applied using the facial landmarks provided by YuNet. This transformation aligns the detected face by correcting rotational offsets before it is passed to SFace, a lightweight neural network model. SFace converts the aligned facial image into a compact 128-dimensional embedding vector that represents the user’s unique facial characteristics.
+\item \textbf{Face Recognition:}
+After successful liveness verification, the system employs a deep learning pipeline consisting of two models: YuNet for face detection and SFace for face recognition. To ensure robustness against pose variations, Affine transformation is applied using the facial landmarks provided by YuNet. This transformation aligns the detected face by correcting rotational offsets before it is passed to SFace. SFace converts the aligned facial image into a compact 128-dimensional embedding vector that represents the user’s unique facial characteristics.
 
 Identity matching is performed using cosine similarity:
 \begin{equation}
 S = \frac{f \cdot g}{\lVert f \rVert \, \lVert g \rVert}
 \end{equation}
 
-where $f$ represents the extracted facial feature vector and $g$ denotes a stored enrollment embedding. Access is granted only if the maximum similarity score exceeds an empirically determined threshold, thereby identifying the user with high confidence.
+where $f$ represents the extracted facial feature vector and $g$ denotes a stored enrollment embedding. Access is granted only if the similarity score exceeds a threshold, thereby identifying the user with high confidence.
 
-\item \textbf{Access Control Logic and Hardware Actuation}:
-The system operates as a finite-state machine that governs transitions between liveness verification, recognition, and access decision states. Upon successful authentication, a command signal is transmitted via serial communication to an Arduino, which actuates a solenoid-based locking mechanism. A cooldown interval is enforced to prevent repeated or unintended triggering.
+\item \textbf{Hardware Actuation:}
+The system effectively governs transitions between liveness verification, recognition, and access states. Upon successful authentication, a command signal is transmitted via serial communication to an Arduino, which actuates a solenoid lock. A cooldown interval is enforced to prevent repeated triggering.
 \end{itemize}
 
 
 %*********************************************************************************
-
+\vspace{-1em}
 \section{Experiments and Evaluation}
 \subsection{Dataset}
-The dataset was collected using a laptop web camera and consists of three subfolders, each corresponding to an individual (Prahas, Harshith, Yahswanth). Each subfolder contains 200 high-quality images, extracted from a 60-second video in which participants performed various head movements and facial expressions. Images are stored locally on the Raspberry Pi, ensuring protection from cyber attacks. The dataset is divided 80-20, with 80 percent of the images used to generate model embeddings and the remaining 20 percent reserved for testing and evaluation.\\ 
-The YuNet and SFace models are well suited for devices such as the Raspberry Pi 5, offering accurate and efficient results. Each image is converted into a 128-dimensional vector. For each individual, the model generates vectors for all training images and averages them to create a 'centroid' or 'mean embedding' that represents that person. These embeddings are saved locally in an embeddings.pkl file on the Raspberry Pi 5. The file is used for real-time recognition and model evaluation.
+The initial dataset was collected using a laptop web camera and consists of three subfolders, each corresponding to an individual. Each subfolder contains 200 high-quality images, extracted from a 60-second video in which participants performed various head movements and facial expressions. Images are temporarily stored locally on the Raspberry Pi until they are converted to vector embeddings, ensuring protection from cyber attacks. A Test Dataset consisting of 150 images was used for evaluation.\\ 
+Each image is converted into a 128-dimensional vector. The model generates vectors for all training images and averages them to create a 'mean' embedding that represents that person. These embeddings are saved locally in an 'embeddings.pkl' file on the Raspberry Pi 5. The file is used for real-time recognition and model evaluation.
 
 \subsection{Baseline}
-As stated in the above sections, we have employed the YuNet \cite{Wu2023YuNet} and SFace model \cite{Zhong2021SFace} for handling the face detection and recognition task successfully and giving accurate results.
-In this section, we are conducting a comparative analysis of our model alongside several others that we have explored. The evaluation metrics focused on True Acceptance Rate (TAR), False Acceptance Rate (FAR), False Rejection Rate (FRR), and overall System Accuracy. Our examination includes traditional approaches such as the Haar Cascade Classifier \cite{voilajonas} and the Histogram of Oriented Gradients in conjunction with support vector machine (SVM) techniques \cite{dalaltriggs}. Additionally, we have evaluated deep learning-based models, including the Dlib facial recognition library in Python \cite{King2009Dlib} and the cutting-edge Insightface (Arcface) framework \cite{Deng2019ArcFace}.
+In this section, we are conducting a comparative analysis of our model alongside several others. The evaluation framework relies on: \textbf{True Acceptance Rate (TAR)}: system correctly verifies a legitimate user who is enrolled in the database, \textbf{False Acceptance Rate (FAR)}: system incorrectly verifies an unauthorized impostor as a legitimate user \textbf{False Rejection Rate (FRR)}: system incorrectly rejects a legitimate user, failing to recognize their enrolled identity, \textbf{True Rejection Rate (TRR)}: system correctly rejects an unauthorized impostor, denying them access, and \textbf{overall Accuracy}. Our examination includes traditional approaches such as the Haar Cascade Classifier \cite{voilajonas} and the Histogram of Oriented Gradients in conjunction with support vector machine (SVM) \cite{dalaltriggs}. Additionally, we have evaluated deep learning-based models, including the Dlib (OpenCV) \cite{King2009Dlib} and the Insightface (Arcface) \cite{Deng2019ArcFace}.
+
+
 
 \subsection{Quantitative Analysis}
+The Haar Cascade model demonstrated a very low accuracy (0.08) and a high FRR (0.87). Due to its basic feature-based approach, which is highly susceptible to changes in lighting conditions and non-frontal facial orientations. Similarly, the HOG + SVM was unable to correctly identify most of authorized users (TAR 0.14), likely due to the inflexibility of HOG descriptors when faced with the varied poses and facial expressions present in the test set.
 
+Among the deep learning approaches, Dlib (OpenCV) achieved improved recognition performance (TAR 0.83), but it was accompanied by a significant security concern: (FAR 0.55). This indicates lack of discriminative ability to differentiate between users and impostors. Although InsightFace demonstrated high accuracy (0.94), it was not selected due to hardware constraints. Its computationally intensive architecture exceeded the capabilities of the Raspberry Pi 5 and rendered it unsuitable for edge deployment.\\
 
+\vspace{-1em}
 % -----------------------------
 % Table 
 % -----------------------------
+
 \begin{table}[htbp]
 \centering
-\caption{Models used and Evaluation}
-\begin{tabular}{|l|c|c|c|c|}
-\hline
-\textbf{Models/ Metrics} & \textbf{TAR} & \textbf{FAR} & \textbf{FRR} &\textbf{System Accuracy}\\
-\hline
-Haar Cascade & 0.12 & 0.70 & 0.87 & 0.08\\
-HOG + SVM & 0.0 & 0.13 & 0.86 & 0.52 \\
-Dlib (OpenCV) & 0.83 & 0.55 & 0.0 & 0.60 \\
-Insightface\textsuperscript{*} & 0.90 & 0.0 & 0.10 & 0.94 \\
-YuNet + SFace & 1.0 & 0.0 & 0.0 & 1.0 \\
-\hline
+\caption{Model Evaluation}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Models} & \textbf{TAR} & \textbf{FAR} & \textbf{FRR} & \textbf{TRR} & \textbf{Accuracy} \\
+\midrule
+Haar Cascade & 0.13 & 0.70 & 0.87 & 0.3 & 0.08 \\
+HOG + SVM & 0.14 & 0.13 & 0.86 & 0.87 & 0.52 \\
+Dlib (OpenCV) & 0.83 & 0.55 & 0.0 & 0.45 & 0.60 \\
+Insightface\textsuperscript{*} & 0.90 & 0.0 & 0.10 & 1.0 & 0.94 \\
+YuNet + SFace (Ours) & 1.0 & 0.0 & 0.0 & 1.0 & 1.0 \\
+\bottomrule
 \end{tabular}
-\label{tab:example_5x5}
+\label{tab:metric evaluation}
 \end{table}
 
-\vspace{0.3em}
-
+\vspace{-0.5em}
 \begin{flushleft}
-\footnotesize * indicates that the training/testing was conducted on a PC instead of the Raspberry Pi 5, due to the computational intensity and hence model was not considered for the final project.
+\footnotesize * indicates that the training/testing was conducted on a PC instead of the Raspberry Pi 5, due to the computational intensity.
 \end{flushleft}
  
-The Haar Cascade model demonstrated a very low accuracy of 0.08 and a high False Rejection Rate (0.87). These results can be attributed to its basic feature-based approach, which is highly susceptible to changes in lighting conditions and non-frontal facial orientations. Similarly, the HOG + SVM approach was unable to correctly identify any authorized users (TAR 0.0), likely due to the inflexibility of Histogram of Oriented Gradients descriptors when faced with the varied poses and facial expressions present in the test set.\\
+Ultimately, YuNet + SFace provided the optimal solution. It achieved perfect metrics (1.0 Accuracy, 0.0 FAR), demonstrating the ideal balance of computational efficiency and high-precision security required for the final system.
 
-Among the deep learning approaches, Dlib (OpenCV) achieved improved recognition performance (TAR 0.83), but it was accompanied by a significant security concern: a False Acceptance Rate of 0.55. This indicates that the model lacked sufficient discriminative ability to reliably differentiate between authorized users and impostors at the operational thresholds. Although InsightFace demonstrated high accuracy (0.94), it was not selected due to hardware constraints. Its computationally intensive architecture exceeded the capabilities of the Raspberry Pi 5 and rendered it unsuitable for edge deployment.\\
-
-Ultimately, YuNet + SFace was selected as the optimal solution. By utilizing lightweight Convolutional Neural Networks (CNNs) optimized for mobile computing, it achieved perfect metrics (1.0 Accuracy, 0.0 FAR), demonstrating the ideal balance of computational efficiency and high-precision security required for the final system.
 
 
 
@@ -280,7 +282,7 @@ Ultimately, YuNet + SFace was selected as the optimal solution. By utilizing lig
 \begin{figure}[htbp]
     \centering
     \Description{Confusion matrix or comparative chart showing model performance across tested configurations.}
-    \includegraphics[width=0.5\textwidth]{img/model_cf.png}
+    \includegraphics[width=0.35\textwidth]{img/model_cf.png}
     \caption{Simple block diagram of the system}
     \label{fig:cf}
 \end{figure}
@@ -292,32 +294,30 @@ Ultimately, YuNet + SFace was selected as the optimal solution. By utilizing lig
 \begin{table}[htbp]
 \centering
 \caption{Ablation Study}
-\footnotesize  % even smaller font
-\begin{tabular}{|l|c|c|c|>{\RaggedRight}p{1.5cm}|}
-\hline
-\textbf{Configuration/Metrics} & \textbf{Accuracy} & \textbf{FAR} & \textbf{Latency} & \textbf{Comments} \\
-\hline
+\footnotesize
+\begin{tabular}{lccc>{\RaggedRight}p{2.5cm}}
+\toprule
+\textbf{Configuration} & \textbf{Accuracy} & \textbf{FAR} & \textbf{Latency} & \textbf{Comments} \\
+\midrule
 YuNet + LBPH & 0.85 & 0.80 & 18 ms & Good cropping cannot fix LBPH's texture limitations. \\
-\hline
 Haar Cascade + SFace & 0.68 & 0.05 & 14 ms & Good recognizer limited by Haar's inability to find faces. \\
-\hline
-Retinaface + Arcface\textsuperscript{*} & 1.0 & 0.0 & 180 ms & Too heavy, accurate but impractical for real-time edge use. \\
-\hline
-YuNet + SFace & 1.0 & 0.0 & 15 ms & \textbf{Optimal}, perfect balance of speed, size, and security. \\
-\hline
+Retinaface + Arcface\textsuperscript{*} & 1.0 & 0.0 & 180 ms & Accurate but impractical for real-time use. \\
+YuNet + SFace (ours) & 1.0 & 0.0 & 15 ms & \textbf{Optimal}, perfect balance of speed, size, and security. \\
+\bottomrule
 \end{tabular}
 \label{tab:ablation}
 \end{table}
 
 
-To further validate the specific architectural components of our proposed system, we conducted an ablation study to isolate the impact of the detector (YuNet) and the recognizer (SFace) independently. We tested four configurations: YuNet + LBPH, Haar Cascade + SFace, Retinaface + Arcface, and the proposed YuNet + SFace.\\
-We first assessed the effect of employing a traditional texture-based recognizer by evaluating the YuNet + LBPH configuration. Despite the integration of a robust detector, system accuracy decreased markedly to 0.45, accompanied by a high False Acceptance Rate (FAR) of 0.40. These results indicate that traditional Local Binary Pattern Histograms (LBPH) lack the necessary feature extraction depth for secure identification, underscoring the need for a deep learning-based recognizer such as SFace.\\
 
-In contrast, we explored the impact of utilizing a less robust detector by pairing Haar Cascade with SFace. Although this setup achieved low latency (14 ms), the accuracy was constrained to 0.68. The system performance was hindered by the Haar Cascade detector's frequent failure to detect faces, resulting in a significant bottleneck. These findings confirm that traditional detectors are inadequate for providing reliably consistent input to the recognition pipeline.\\
+To further validate our proposed system, we conducted an ablation study to isolate the impact of the detector (YuNet) and the recognizer (SFace) independently. We tested four configurations: YuNet + LBPH, Haar Cascade + SFace, Retinaface + Arcface, and the proposed YuNet + SFace.
+We first assessed the texture-based recognizer by evaluating the YuNet + LBPH. Despite the integration of a robust detector, system accuracy decreased to 0.45, accompanied by a high FAR (0.40). These results indicates, Local Binary Pattern Histograms (LBPH) lack the necessary feature extraction depth for secure identification.
+
+In contrast, we explored a less robust detector by pairing Haar Cascade with SFace. Although this setup achieved low latency (14 ms), the accuracy was constrained to 0.68. The system performance was hindered by the Haar Cascade detector's frequent failure to detect faces, resulting in a significant bottleneck. These findings confirm that traditional detectors are inadequate for providing reliably consistent input to the recognition pipeline.
 
 The Retinaface + Arcface configuration matched our model's perfect accuracy (1.0) and FAR (0.0), it suffered from a massive latency penalty, taking 180 ms per frame. This is over 10 times slower than our proposed solution, making it impractical for real-time edge applications where rapid response is critical.\\
 
-The YuNet + SFace configuration emerged as the optimal architecture. It achieved the same perfect accuracy (1.0) and security (0.0 FAR) as the heavy-weight model but maintained an ultra-low latency of 15 ms. This confirms that YuNet + SFace successfully bridges the gap between high-performance security and real-time efficiency, validating its selection as the core engine for our embedded system.
+The YuNet + SFace configuration emerged as the optimal architecture. It achieved perfect accuracy (1.0) and security (0.0 FAR) and also maintained an ultra-low latency of 15 ms. This confirms that YuNet + SFace successfully bridges the gap between high-performance security and real-time efficiency, validating its selection as the core engine for our embedded system.
 
 
 

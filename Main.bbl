@@ -1,0 +1,201 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{15}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{} and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showURL}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showURL #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[{Arduino Expert}(2025)]%
+        {arduinoexpert2025}
+\bibfield{author}{\bibinfo{person}{{Arduino Expert}}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \bibinfo{title}{IoT Smart Door Lock Using ESP32, Solenoid Lock \&
+  Blynk App}.
+\newblock \bibinfo{howpublished}{Online:
+  \url{https://arduinoexpert.com/iot-smart-door-lock-using-esp32-and-blynk/}}.
+\newblock
+
+
+\bibitem[Bhattacharjee(2018)]%
+        {bhattacharjee2018}
+\bibfield{author}{\bibinfo{person}{S. Bhattacharjee}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \bibinfo{title}{Spoofing Deep Face Recognition with Custom Silicone
+  Masks}.
+\newblock \bibinfo{howpublished}{Conference paper (ICB 2018) -- online
+  reference when available}.
+\newblock
+
+
+\bibitem[Dalal and Triggs(2005)]%
+        {dalaltriggs}
+\bibfield{author}{\bibinfo{person}{N. Dalal} {and} \bibinfo{person}{B.
+  Triggs}.} \bibinfo{year}{2005}\natexlab{}.
+\newblock \bibinfo{title}{Histograms of Oriented Gradients for Human
+  Detection}.
+\newblock \bibinfo{howpublished}{CVPR 2005}.
+\newblock
+
+
+\bibitem[Deng et~al\mbox{.}(2019)]%
+        {Deng2019ArcFace}
+\bibfield{author}{\bibinfo{person}{J. Deng} {et~al\mbox{.}}}
+  \bibinfo{year}{2019}\natexlab{}.
+\newblock \bibinfo{title}{ArcFace: Additive Angular Margin Loss for Deep Face
+  Recognition}.
+\newblock \bibinfo{howpublished}{CVPR 2019}.
+\newblock
+
+
+\bibitem[Hartley and Sturm(1997)]%
+        {Hartley1997}
+\bibfield{author}{\bibinfo{person}{Richard~I. Hartley} {and}
+  \bibinfo{person}{Peter Sturm}.} \bibinfo{year}{1997}\natexlab{}.
+\newblock \showarticletitle{Triangulation}.
+\newblock \bibinfo{journal}{\emph{Computer Vision and Image Understanding}}
+  \bibinfo{volume}{68}, \bibinfo{number}{2} (\bibinfo{year}{1997}),
+  \bibinfo{pages}{146--157}.
+\newblock
+\href{https://doi.org/10.1006/cviu.1997.0547}{doi:\nolinkurl{10.1006/cviu.1997.0547}}
+
+
+\bibitem[Hirschm{\"u}ller(2008)]%
+        {hirschmuller2008stereo}
+\bibfield{author}{\bibinfo{person}{Heiko Hirschm{\"u}ller}.}
+  \bibinfo{year}{2008}\natexlab{}.
+\newblock \showarticletitle{Stereo processing by semiglobal matching and mutual
+  information}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on pattern analysis and
+  machine intelligence}} \bibinfo{volume}{30}, \bibinfo{number}{2}
+  (\bibinfo{year}{2008}), \bibinfo{pages}{328--341}.
+\newblock
+
+
+\bibitem[King(2009)]%
+        {King2009Dlib}
+\bibfield{author}{\bibinfo{person}{D.~E. King}.}
+  \bibinfo{year}{2009}\natexlab{}.
+\newblock \bibinfo{title}{Dlib-ml: A Machine Learning Toolkit}.
+\newblock \bibinfo{howpublished}{Journal of Machine Learning Research
+  (software/library)}.
+\newblock
+
+
+\bibitem[{Mordor Intelligence}(2026)]%
+        {mordor2026}
+\bibfield{author}{\bibinfo{person}{{Mordor Intelligence}}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \bibinfo{title}{Smart Home Video Surveillance Market Size \& Growth
+  Analysis Report}.
+\newblock \bibinfo{howpublished}{Online:
+  \url{https://www.mordorintelligence.com/industry-reports/smart-home-video-surveillance-market}}.
+\newblock
+
+
+\bibitem[{OpenCV}(2023)]%
+        {yunet2023}
+\bibfield{author}{\bibinfo{person}{{OpenCV}}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \bibinfo{title}{YuNet: A tiny millisecond-level face detector}.
+\newblock \bibinfo{howpublished}{Online:
+  \url{https://huggingface.co/opencv/face_detection_yunet}}.
+\newblock
+
+
+\bibitem[Schroff et~al\mbox{.}(2015)]%
+        {Schroff2015}
+\bibfield{author}{\bibinfo{person}{Florian Schroff}, \bibinfo{person}{Dmitry
+  Kalenichenko}, {and} \bibinfo{person}{James Philbin}.}
+  \bibinfo{year}{2015}\natexlab{}.
+\newblock \showarticletitle{FaceNet: A unified embedding for face recognition
+  and clustering}. In \bibinfo{booktitle}{\emph{2015 IEEE Conference on
+  Computer Vision and Pattern Recognition (CVPR)}}. \bibinfo{pages}{815--823}.
+\newblock
+\href{https://doi.org/10.1109/CVPR.2015.7298682}{doi:\nolinkurl{10.1109/CVPR.2015.7298682}}
+
+
+\bibitem[Serengil(2024)]%
+        {deepface2024}
+\bibfield{author}{\bibinfo{person}{S. Serengil}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{DeepFace: A Lightweight Face Recognition and Facial
+  Attribute Analysis Framework}.
+\newblock \bibinfo{howpublished}{GitHub repository:
+  \url{https://github.com/serengil/deepface}}.
+\newblock
+
+
+\bibitem[Viola and Jones(2001)]%
+        {voilajonas}
+\bibfield{author}{\bibinfo{person}{P. Viola} {and} \bibinfo{person}{M. Jones}.}
+  \bibinfo{year}{2001}\natexlab{}.
+\newblock \bibinfo{title}{Rapid object detection using a boosted cascade of
+  simple features}.
+\newblock \bibinfo{howpublished}{CVPR 2001 (classic paper)}.
+\newblock
+
+
+\bibitem[Wang(2016)]%
+        {researchgate2016}
+\bibfield{author}{\bibinfo{person}{L. Wang}.} \bibinfo{year}{2016}\natexlab{}.
+\newblock \bibinfo{title}{Liveness Detection Using Texture and 3D Structure
+  Analysis}.
+\newblock \bibinfo{howpublished}{Online:
+  \url{https://www.researchgate.net/publication/308383798}}.
+\newblock
+
+
+\bibitem[Zainuddin(2024)]%
+        {zainuddin2024}
+\bibfield{author}{\bibinfo{person}{A. Zainuddin}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{Vulnerability Analysis of Smart Lock Using NIST SP
+  800-115 Method}.
+\newblock \bibinfo{howpublished}{Online:
+  \url{https://www.researchgate.net/publication/396254787}}.
+\newblock
+
+
+\bibitem[Zhang(2000)]%
+        {Zhang1998}
+\bibfield{author}{\bibinfo{person}{Zhengyou Zhang}.}
+  \bibinfo{year}{2000}\natexlab{}.
+\newblock \showarticletitle{A flexible new technique for camera calibration}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Pattern Analysis and
+  Machine Intelligence}} \bibinfo{volume}{22}, \bibinfo{number}{11}
+  (\bibinfo{year}{2000}), \bibinfo{pages}{1330--1334}.
+\newblock
+\href{https://doi.org/10.1109/34.888718}{doi:\nolinkurl{10.1109/34.888718}}
+
+
+\end{thebibliography}
