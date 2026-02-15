@@ -42,7 +42,7 @@
 \begin{document}
 
 %% The "title" command has an optional parameter allowing the author to define a "short title" to be used in page headers.
-\title[VISION PRO SURVEILLANCE]{Stereoscopic Liveness Detection and Face Authentication for Secure Smart Locks}
+\title[Vision Pro Surveillance]{Stereoscopic Liveness Detection and Face Authentication for Secure Smart Locks}
 
 %% The "author" command is used to define the authors.
 %% You shall sabmit the anonymised version of your paper for review, so no need to include author names here.
@@ -73,7 +73,7 @@ This paper presents a smart locking system that integrates face recognition with
 
 \vspace{-1em}
 \section{Introduction}
-Smart surveillance systems \cite{mordor2026} play a crucial role in home security allowing authorized access. However, traditional methods such as PIN codes, RFID cards, and fingerprints are increasingly vulnerable to forgery, and tampering \cite{zainuddin2024}. While existing face recognition algorithms offer a more seamless approach, they remain susceptible to spoofing attacks using high-resolution photos or videos and may struggle in different lighting conditions \cite{bhattacharjee2018}. Furthermore, modern solutions utilize complex machine learning models that improve accuracy but require high computational resources, limiting their use on lightweight platforms like the Raspberry Pi. These advanced systems also rely on cloud infrastructure for database storage, which adds to the overall financial cost of the system.
+Smart surveillance systems \cite{mordor2026} play a crucial role in home security allowing authorized access. However, traditional methods such as PIN codes, RFID cards, and fingerprints are increasingly vulnerable to forgery, and tampering \cite{zainuddin2024}. While existing face recognition algorithms offer a more seamless approach, they remain susceptible to spoofing attacks using high-resolution photos or videos and may struggle in different lighting conditions \cite{bhattacharjee2018}. Furthermore, modern solutions utilize complex machine learning models that improve accuracy but require high computational resources, limiting their use on lightweight platforms like the Raspberry Pi. These advanced systems also rely on cloud infrastructure for database storage \cite{maheshwari2017}, which adds to the overall financial cost of the system.
 
 To overcome these challenges, we propose liveness using epipolar geometry \cite{hartley2003multiple} and facial landmarks (eyes and nose) to find depth, a lightweight yet effective measure to thwart 2-D spoofing (Fig.\ref{fig:syst}). High-speed face detection and recognition are achieved using YuNet \cite{Wu2023YuNet} and SFace \cite{Zhong2021SFace}, specifically optimized for resource-constrained environments \cite{deepface2024}. An Arduino controls a solenoid lock, while a web-based dashboard provides live monitoring and remote admin approval \cite{arduinoexpert2025}. The proposed pipeline achieves a balance between security, accuracy, and performance.
 
@@ -101,6 +101,13 @@ To achieve passive, secure liveness detection, our work leverages Stereo Vision 
 
 
 %*********************************************************************************
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=0.4\textwidth]{img/complx_bd.jpeg}
+    \caption{\textbf{Integrated System Architecture.} System components with data flow from stereo capture to lock actuation.}
+    \label{fig:sys2}
+\end{figure}
+
 
 %*********************************************************************************
 
@@ -169,40 +176,9 @@ Eq.\ref{eq:sface_brief}, the first term forces features of the same identity to 
 
 The resulting score ranges from -1 (completely different) to 1 (exactly the same). In the context of face recognition, this metric is preferred over Euclidean distance because it focuses on the orientation of the feature vectors rather than their magnitude.
 
-
 %*****************************************************************************************
 
 \section{Methodology}
-
-\begin{figure*}[t!]
-    \centering
-    % Left side: 2 small subfigures SIDE-BY-SIDE
-    \begin{subfigure}{0.5\textwidth}
-        \centering
-        \begin{subfigure}{0.41\textwidth}
-            \includegraphics[width=\textwidth]{img/mesh2.jpeg}
-            \caption{\textbf{3D Reconstruction.} of facial depth by mesh.}
-            \label{fig:sys1a}
-        \end{subfigure}%
-        \hspace{0.04\textwidth}%
-        \begin{subfigure}{0.45\textwidth}
-            \includegraphics[width=\textwidth]{img/disparity_new.jpeg}
-            \caption{\textbf{Disparity.} Disparity map showing depth variations.}
-            \label{fig:sys1b}
-        \end{subfigure}
-    \end{subfigure}%
-    \hspace{2em}% 
-    \begin{subfigure}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{img/complx_bd.jpeg}
-        \caption{\textbf{Integrated System Architecture.}System components with data flow.}
-        \label{fig:sys2}
-    \end{subfigure}
-    \caption{\textbf{Liveness (3D Reconstruction and Disparity) and Integrated System Architecture.}}
-    \label{fig:system}
-\end{figure*}
-
-
 
 
 \subsection{System Overview}
@@ -228,6 +204,7 @@ A human face is a 3D object where the nose is closer to the camera than the eyes
 \label{eq:livez}
 \end{equation}
 where $Z_{\text{left\_eye}}$, $Z_{\text{right\_eye}}$, and $Z_{\text{nose}}$ denote the estimated depths at the corresponding facial landmark. The liveness condition is satisfied if the resulting geometric protrusion exceeds a predefined threshold. The threshold $[\Delta Z_{min}, \Delta Z_{max}]$ defined on the empirical separation between planar spoofs ($\approx 0\text{m}$) and actaul facial depth profiles ($>0.020\text{m}$), as in Appendix \ref{sec:appendix}. This range effectively rejects both 2D presentation attacks and depth estimation outliers. Liveness is validated across 3 consecutive frames to filter transient noise.
+
 
 
 \paragraph{\textbf{Face Recognition}}
@@ -267,6 +244,16 @@ Cosine similarity (Eq.\ref{eq:cosine_similarity}) is used to compare the extract
 The system governs transitions between liveness verification, recognition, and access states. Upon successful authentication, a signal is transmitted via serial communication to an Arduino, which actuates a solenoid lock. A cooldown interval of 5 seconds is enforced to prevent repeated triggering.
 
 
+
+\begin{figure}[t!]
+    \centering
+    \Description{Confusion matrix or comparative chart showing model performance across tested configurations.}
+    \includegraphics[width=0.4\textwidth]{img/model_cf.png}
+    \caption{\textbf{Confusion Matrix for YuNet + SFace.}Demonstrating perfect accuracy and low error.}
+    \label{fig:cf}
+\end{figure}
+
+
 %*********************************************************************************
 \section{Experiments and Evaluation}
 
@@ -274,18 +261,30 @@ The system governs transitions between liveness verification, recognition, and a
 We collect a dataset using a laptop web camera, including 200 high-quality images from three participants who perform various head movements and facial expressions during 60-second videos. For security, images are temporarily stored on a Raspberry Pi. Our evaluation uses a test dataset of 150 images. The model creates 128-dimensional vector embeddings for each training image and averages them to form a mean embedding for each identity, stored locally on the Raspberry Pi for real-time recognition and evaluation.
 
 
-\begin{figure}[t!]
-    \centering
-    \Description{Confusion matrix or comparative chart showing model performance across tested configurations.}
-    \includegraphics[width=0.45\textwidth]{img/model_cf.png}
-    \caption{\textbf{Confusion Matrix for YuNet + SFace.w} Demonstrating perfect accuracy and low error.}
-    \label{fig:cf}
-\end{figure}
+
+
+
+\subsection{Baselines}
+Our examination includes traditional approaches such as the Haar Cascade Classifier \cite{voilajonas} and the Histogram of Oriented Gradients in conjunction with support vector machine (SVM) \cite{dalaltriggs}. Additionally, we have evaluated deep learning-based models, including the Dlib (OpenCV) \cite{King2009Dlib} and the Insightface (Arcface) \cite{Deng2019ArcFace}.
+
+
+\subsection{Evaluation Metrics}
+To evaluate the performance of our system, we utilize standard classification metrics derived from the confusion matrix (Fig. \ref{fig:cf}): True Positives (TP), False Positives (FP), True Negatives (TN), and False Negatives (FN). We measure \textbf{Accuracy}, representing the overall correctness of the model. Furthermore, we calculate \textbf{Precision}, defined as the ratio of correctly predicted positive observations to the total predicted positives, and \textbf{Recall} (True Positive Rate), which measures the ratio of correctly predicted positive observations to the actual class. Finally, we report the \textbf{F1-Score}, the harmonic mean of Precision and Recall that balances the two metrics.
+
+
+
+
+\subsection{Quantitative Analysis}
+The Haar Cascade model demonstrated a very low Accuracy (0.08) and a high False Negative rate (FN 0.87). Due to its basic feature-based approach, which is highly susceptible to changes in lighting conditions and non-frontal facial orientations. Similarly, the HOG + SVM was unable to correctly identify most authorized users (Recall 0.14), likely due to the inflexibility of HOG descriptors when faced with the varied poses and facial expressions.
+
+Among the deep learning approaches, Dlib (OpenCV) achieved improved recognition performance (Recall 0.83), but it was accompanied by a significant security concern: a high False Positive rate (FP 0.55). This indicates a lack of discriminative ability to differentiate between users and impostors. Although InsightFace demonstrated high Accuracy (0.94) and perfect Precision (1.00), it was not selected due to its computationally intensive architecture, exceeding the capabilities of the Raspberry Pi 5 for edge deployment.
+
+Ultimately, YuNet + SFace provided the optimal solution. It achieved perfect metrics (1.00 Accuracy, 1.00 Precision, 0.00 FP), demonstrating the ideal balance of computational efficiency and high-precision security required for the final system (Table \ref{tab:metric evaluation}).
 
 
 \begin{table}[t!]
 \centering
-\caption{Model Evaluation (Standard Metrics)}
+\caption{Model Evaluation}
 \resizebox{\linewidth}{!}{%
 \begin{tabular}{lccccccc}
 \toprule
@@ -306,39 +305,8 @@ YuNet + SFace (Ours) & \textbf{1.00} & \textbf{0.00} & \textbf{1.00} & \textbf{0
 \end{table}
 
 
-\subsection{Baselines}
-Our examination includes traditional approaches such as the Haar Cascade Classifier \cite{voilajonas} and the Histogram of Oriented Gradients in conjunction with support vector machine (SVM) \cite{dalaltriggs}. Additionally, we have evaluated deep learning-based models, including the Dlib (OpenCV) \cite{King2009Dlib} and the Insightface (Arcface) \cite{Deng2019ArcFace}.
 
 
-\subsection{Evaluation Metrics}
-To evaluate the performance of our system, we utilize standard classification metrics derived from the confusion matrix: True Positives (TP), False Positives (FP), True Negatives (TN), and False Negatives (FN). We measure \textbf{Accuracy}, representing the overall correctness of the model. Furthermore, we calculate \textbf{Precision}, defined as the ratio of correctly predicted positive observations to the total predicted positives, and \textbf{Recall} (True Positive Rate), which measures the ratio of correctly predicted positive observations to the actual class. Finally, we report the \textbf{F1-Score}, the harmonic mean of Precision and Recall that balances the two metrics.
-
-
-
-
-\subsection{Quantitative Analysis}
-The Haar Cascade model demonstrated a very low Accuracy (0.08) and a high False Negative rate (FN 0.87). Due to its basic feature-based approach, which is highly susceptible to changes in lighting conditions and non-frontal facial orientations. Similarly, the HOG + SVM was unable to correctly identify most authorized users (Recall 0.14), likely due to the inflexibility of HOG descriptors when faced with the varied poses and facial expressions.
-
-Among the deep learning approaches, Dlib (OpenCV) achieved improved recognition performance (Recall 0.83), but it was accompanied by a significant security concern: a high False Positive rate (FP 0.55). This indicates a lack of discriminative ability to differentiate between users and impostors. Although InsightFace demonstrated high Accuracy (0.94) and perfect Precision (1.00), it was not selected due to its computationally intensive architecture, exceeding the capabilities of the Raspberry Pi 5 for edge deployment.
-
-Ultimately, YuNet + SFace provided the optimal solution. It achieved perfect metrics (1.00 Accuracy, 1.00 Precision, 0.00 FP), demonstrating the ideal balance of computational efficiency and high-precision security required for the final system.
-
-
-
-
-\subsection{Ablation Study}
-We conducted an ablation study to isolate the impact of the detector (YuNet) and the recognizer (SFace) independently. We tested four configurations: YuNet + LBPH, Haar Cascade + SFace, Retinaface + Arcface, and the proposed YuNet + SFace.
-We first assessed the YuNet + LBPH. Despite the integration of a robust detector, system accuracy decreased to 0.45, accompanied by a high FP (0.40). These results indicates, Local Binary Pattern Histograms (LBPH) lack the necessary feature extraction depth for secure identification.
-
-In contrast, we explored a less robust detector by pairing Haar Cascade with SFace. Although this setup achieved low latency (14 ms), the accuracy was constrained to 0.68. The system performance was hindered by the Haar Cascade detector's frequent failure to detect faces, resulting in a significant bottleneck.
-
-The Retinaface + Arcface configuration matched our model's perfect accuracy (1.0) and FP (0.0), it suffered from a massive latency penalty, taking 180 ms per frame. This is over 10 times slower than our proposed solution, making it impractical for real-time edge applications where rapid response is critical.
-
-The YuNet + SFace configuration emerged as the optimal architecture. It achieved perfect accuracy (1.0) and security (0.0 FP) and also maintained an ultra-low latency of 15 ms. This confirms that YuNet + SFace successfully bridges the gap between high-performance security and real-time efficiency.
-
-% -----------------------------
-% Table 
-% -----------------------------
 \begin{table}[t!]
 \centering
 \caption{Ablation Study}
@@ -355,6 +323,45 @@ YuNet + SFace (ours) & 1.0 & 0.0 & 15 ms & \textbf{Optimal}, perfect balance of 
 \end{tabular}
 \label{tab:ablation}
 \end{table}
+
+
+
+\subsection{Ablation Study}
+We conducted an ablation study to isolate the impact of the detector (YuNet) and the recognizer (SFace) independently (Table \ref{tab:ablation}). We tested four configurations: YuNet + LBPH, Haar Cascade + SFace, Retinaface + Arcface, and the proposed YuNet + SFace.
+We first assessed the YuNet + LBPH. Despite the integration of a robust detector, system accuracy decreased to 0.45, accompanied by a high FP (0.40). These results indicates, Local Binary Pattern Histograms (LBPH) lack the necessary feature extraction depth for secure identification.
+
+In contrast, we explored a less robust detector by pairing Haar Cascade with SFace. Although this setup achieved low latency (14 ms), the accuracy was constrained to 0.68. The system performance was hindered by the Haar Cascade detector's frequent failure to detect faces, resulting in a significant bottleneck.
+
+The Retinaface + Arcface configuration matched our model's perfect accuracy (1.0) and FP (0.0), it suffered from a massive latency penalty, taking 180 ms per frame. This is over 10 times slower than our proposed solution, making it impractical for real-time edge applications where rapid response is critical.
+
+The YuNet + SFace configuration emerged as the optimal architecture. It achieved perfect accuracy (1.0) and security (0.0 FP) and also maintained an ultra-low latency of 15 ms. This confirms that YuNet + SFace successfully bridges the gap between high-performance security and real-time efficiency.
+
+% -----------------------------
+% Table 
+% -----------------------------
+
+
+
+\begin{figure}[t!]
+    \centering
+    \begin{subfigure}{0.2\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{img/mesh2.jpeg}
+        \caption{\textbf{3D Reconstruction.} Facial depth reconstructed as a mesh.}
+        \label{fig:sys1a}
+    \end{subfigure}%
+    \hspace{0.04\textwidth}%
+    \begin{subfigure}{0.22\textwidth} 
+        \centering
+        \includegraphics[width=\textwidth]{img/disparity_new.jpeg}
+        \caption{\textbf{Disparity.} Disparity map showing depth variations.}
+        \label{fig:sys1b}
+    \end{subfigure}
+    \caption{\textbf{Liveness cues:} 3D reconstruction and disparity visualization.}
+    \label{fig:liveness_visuals}
+\end{figure}
+
+
 
 
 
@@ -387,10 +394,12 @@ We also extend our heartfelt thanks to Prof. Dr. Andreas Lehrmann for his valuab
 \appendix
 \section{Depth Analysis and Liveness Thresholds}
 \label{sec:appendix}
+
+
 % -----------------------------
 % Table I
 % -----------------------------
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Expected Depth Differences}
 \begin{tabular}{l>{\centering\arraybackslash}p{4cm}}
